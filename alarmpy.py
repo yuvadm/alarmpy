@@ -19,7 +19,8 @@ def fetch():
         except:
             print(datetime.now().isoformat(), res.content)
     else:
-        print("good")
+        # print("good")
+        pass
 
 
 if __name__ == "__main__":
