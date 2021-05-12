@@ -1,4 +1,5 @@
 from datetime import datetime
+from time import sleep
 
 import requests
 
@@ -13,8 +14,15 @@ URL = 'https://www.oref.org.il/WarningMessages/alert/alerts.json'
 def fetch():
     res = requests.get(URL, headers=HEADERS)
     if res.content:
-        print(datetime.now().isoformat(), res.json())
+        try:
+            print(datetime.now().isoformat(), res.json())
+        except:
+            print(datetime.now().isoformat(), res.content)
+    else:
+        print("good")
 
 
 if __name__ == "__main__":
-    fetch()
+    while True:
+        sleep(1)
+        fetch()
