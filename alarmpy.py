@@ -48,7 +48,7 @@ class Alarm(object):
                 if self.alarm_id:
                     click.secho(f"({alarm_id})")
             except:
-                click.secho(f"Error parsing JSON {res.content}", fg="red", bold=True)
+                click.secho(f"Error parsing JSON {res.content}", fg="yellow", bold=True)
         else:
             if self.active_alarm or (
                 time() - self.last_routine > self.last_routine_delay
