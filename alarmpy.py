@@ -102,11 +102,11 @@ class Alarm(object):
 @click.option(
     "--routine-delay", default=60 * 5, help="Routine message delay in seconds"
 )
-@click.option("--alarm-id", is_flag=True, help="Print alarm ID")
+@click.option("--alarm-id", is_flag=True, help="Print alarm IDs")
 @click.option("--repeat-alarms", is_flag=True, help="Do not suppress ongoing alarms")
 def alarm(**kwargs):
     Alarm(**kwargs).start()
 
 
 if __name__ == "__main__":
-    alarm()  # pylint: disable=no-value-for-parameter
+    alarm()
