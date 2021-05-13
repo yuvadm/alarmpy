@@ -29,9 +29,15 @@ class Alarm(object):
             sleep(self.delay)
 
     def fetch(self):
-        res = requests.get(self.URL, headers=self.HEADERS, timeout=1)
         now = datetime.now()
         ts = now.strftime("%Y-%m-%d %H:%M:%S")
+
+        try:
+            res = requests.get(self.URL, headers=self.HEADERS, timeout=1)
+        except Exception as e:
+            click.secho(f"{ts} ", nl=False)
+            click.secho(f"Exception: {e}", fg="yellow")
+            return
 
         if res.content:
             click.secho(f"{ts} ", nl=False)
