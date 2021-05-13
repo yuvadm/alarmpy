@@ -3,6 +3,8 @@ import requests
 
 from datetime import datetime
 from time import sleep, time
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 
 class Alarm(object):
@@ -25,6 +27,13 @@ class Alarm(object):
 
         self.current_alarms = []
         self.last_routine_output = 0
+        self.session = requests.Session()
+        self.init_session()
+
+    def init_session(self):
+        retry = Retry(connect=3, backoff_factor=0.5)
+        adapter = HTTPAdapter(max_retries=retry)
+        self.session.mount('https://', adapter)
 
     def start(self):
         while True:
@@ -38,7 +47,7 @@ class Alarm(object):
 
     def fetch(self):
         try:
-            res = requests.get(self.URL, headers=self.HEADERS, timeout=1)
+            res = self.session.get(self.URL, headers=self.HEADERS, timeout=1)
         except requests.Timeout:
             raise Exception("HTTP request timed out")
 
