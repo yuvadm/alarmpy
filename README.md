@@ -1,5 +1,7 @@
 # Pikud Ha'oref Alarm Tracking
 
+![example.png](example.png)
+
 A simple CLI tool for tracking Pikud Ha'oref alarms.
 
 Polls the unofficial API endpoint every second for incoming alarms. Prints active alarms as they occur. Prints routine messages once every 5 minutes by default.
