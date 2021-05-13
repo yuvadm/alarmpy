@@ -2,7 +2,6 @@ import click
 import requests
 
 from datetime import datetime
-from requests.exceptions import ReadTimeout
 from time import sleep, time
 
 
@@ -40,7 +39,7 @@ class Alarm(object):
     def fetch(self):
         try:
             res = requests.get(self.URL, headers=self.HEADERS, timeout=1)
-        except ReadTimeout:
+        except requests.Timeout:
             raise Exception("HTTP request timed out")
 
         if not res.content:
