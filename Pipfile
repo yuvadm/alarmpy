@@ -5,8 +5,9 @@ name = "pypi"
 
 [packages]
 requests = "*"
+click = "*"
 
 [dev-packages]
 
-[requires]
-python_version = "3.9"
+[scripts]
+alarmpy = "python alarmpy.py"
