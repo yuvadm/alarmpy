@@ -2,6 +2,7 @@ import click
 import requests
 
 from datetime import datetime
+from requests.exceptions import ReadTimeout
 from time import sleep, time
 
 
@@ -21,55 +22,79 @@ class Alarm(object):
         self.alarm_id = alarm_id
         self.repeat_alarms = repeat_alarms
 
-        self.active_alarm = False
-        self.last_routine = 0
-
-        self.last = None
+        self.current_alarms = []
+        self.last_routine_output = 0
 
     def start(self):
         while True:
-            self.fetch()
-            sleep(self.delay)
+            try:
+                cities, alarm_id = self.fetch()
+                self.update(cities, alarm_id)
+            except Exception as e:
+                self.output_error(f"Exception: {e}")
+            finally:
+                sleep(self.delay)
 
     def fetch(self):
-        now = datetime.now()
-        ts = now.strftime("%Y-%m-%d %H:%M:%S")
-
         try:
             res = requests.get(self.URL, headers=self.HEADERS, timeout=1)
-        except Exception as e:
-            click.secho(f"{ts} ", nl=False)
-            click.secho(f"Exception: {e}", fg="yellow")
-            return
+        except ReadTimeout:
+            raise Exception("HTTP request timed out")
 
-        if res.content:
+        if not res.content:
+            # empty content means no alarms
+            return [], None
 
-            try:
-                data = res.json()
-                self.active_alarm = True
-                alarm_id = data["id"]
-                cities = data["data"]
+        try:
+            data = res.json()
+            alarm_id = data["id"]
+            cities = data["data"]
+            return cities, alarm_id
+        except ValueError:
+            raise Exception(f"Error parsing JSON: {res.content}")
+        except KeyError:
+            raise Exception(f"Missing keys in JSON data: {data}")
 
-                cities_str = ", ".join(cities)
-                if self.repeat_alarms or cities_str != self.last:
-                    click.secho(f"{ts} ", nl=False)
-                    click.secho(f"{cities_str} ", fg="red", nl=not self.alarm_id)
-                    if self.alarm_id:
-                        click.secho(f"({alarm_id})")
-                    self.last = cities_str
-            except:
-                click.secho(f"{ts} ", nl=False)
-                click.secho(f"Error parsing JSON {res.content}", fg="yellow", bold=True)
+    def update(self, cities, alarm_id):
+        if cities:
+            self.update_alarm(cities, alarm_id)
         else:
-            self.last = None
-            if self.active_alarm or (
-                time() - self.last_routine > self.last_routine_delay
-            ):
-                click.secho(f"{ts} ", nl=False)
-                click.secho(f"No active alarms", fg="green")
-                self.last_routine = time()
+            self.update_routine()
 
-            self.active_alarm = False
+    def update_alarm(self, cities, alarm_id):
+        if self.repeat_alarms or set(cities) != set(self.current_alarms):
+            self.output_alarms(cities, alarm_id)
+        self.current_alarms = cities
+
+    def update_routine(self):
+        now = time()
+        if (
+            self.current_alarms
+            or now - self.last_routine_output > self.last_routine_delay
+        ):
+            self.output_routine()
+            self.last_routine_output = now
+        self.current_alarms = []
+
+    def output_leading_timestamp(self):
+        now = datetime.now()
+        ts = now.strftime("%Y-%m-%d %H:%M:%S")
+        click.secho(f"{ts} ", nl=False)
+
+    def output_error(self, err):
+        self.output_leading_timestamp()
+        click.secho(err, fg="yellow", bold=True)
+
+    def output_routine(self):
+        self.output_leading_timestamp()
+        click.secho(f"No active alarms", fg="green")
+
+    def output_alarms(self, cities, alarm_id):
+        self.output_leading_timestamp()
+        cities_str = ", ".join(cities)
+        click.secho(f"{cities_str} ", fg="red", nl=not self.alarm_id)
+        if self.alarm_id:
+            click.secho(f"({alarm_id})")
 
 
 @click.command()
@@ -79,13 +104,8 @@ class Alarm(object):
 )
 @click.option("--alarm-id", is_flag=True, help="Print alarm ID")
 @click.option("--repeat-alarms", is_flag=True, help="Do not suppress ongoing alarms")
-def alarm(delay=1, routine_delay=60 * 5, alarm_id=False, repeat_alarms=False):
-    Alarm(
-        delay=delay,
-        routine_delay=routine_delay,
-        alarm_id=alarm_id,
-        repeat_alarms=repeat_alarms,
-    ).start()
+def alarm(**kwargs):
+    Alarm(**kwargs).start()
 
 
 if __name__ == "__main__":
