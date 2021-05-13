@@ -41,9 +41,7 @@ class Alarm(object):
                 alarm_id = data["id"]
                 cities = data["data"]
 
-                click.secho(
-                    f"{', '.join(cities)} ", fg="red", bold=True, nl=not self.alarm_id
-                )
+                click.secho(f"{', '.join(cities)} ", fg="red", nl=not self.alarm_id)
 
                 if self.alarm_id:
                     click.secho(f"({alarm_id})")
