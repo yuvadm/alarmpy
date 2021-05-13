@@ -62,12 +62,16 @@ class Alarm(object):
 
 @click.command()
 @click.option("--delay", default=1, help="Polling delay in seconds")
-@click.option("--alarm-id", is_flag=True, help="Print alarm ID")
 @click.option(
     "--routine-delay", default=60 * 5, help="Routine message delay in seconds"
 )
-def alarm(delay, alarm_id, routine_delay):
-    Alarm(delay=delay, alarm_id=alarm_id, routine_delay=routine_delay).start()
+@click.option("--alarm-id", is_flag=True, help="Print alarm ID")
+def alarm(delay=1, routine_delay=60 * 5, alarm_id=False):
+    Alarm(
+        delay=delay,
+        routine_delay=routine_delay,
+        alarm_id=alarm_id,
+    ).start()
 
 
 if __name__ == "__main__":
