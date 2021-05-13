@@ -1,6 +1,6 @@
-# Pikud HaOref Alarm Tracking
+# Pikud Ha'oref Alarm Tracking
 
-A simple CLI tool for tracking Pikud HaOref alarms.
+A simple CLI tool for tracking Pikud Ha'oref alarms.
 
 ## Usage
 
