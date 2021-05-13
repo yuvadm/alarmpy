@@ -16,7 +16,9 @@ class Alarm(object):
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36",
     }
 
-    def __init__(self, delay=1, routine_delay=5, alarm_id=False, repeat_alarms=False):
+    def __init__(
+        self, delay=1, routine_delay=60 * 5, alarm_id=False, repeat_alarms=False
+    ):
         self.delay = delay
         self.last_routine_delay = routine_delay
         self.alarm_id = alarm_id
