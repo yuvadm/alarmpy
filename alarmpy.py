@@ -16,12 +16,13 @@ class Alarm(object):
     }
 
     def __init__(
-        self, delay=1, routine_delay=60 * 5, alarm_id=False, repeat_alarms=False
+        self, delay=1, routine_delay=60 * 5, alarm_id=False, repeat_alarms=False, quiet=False
     ):
         self.delay = delay
         self.last_routine_delay = routine_delay
         self.alarm_id = alarm_id
         self.repeat_alarms = repeat_alarms
+        self.quiet = quiet
 
         self.current_alarms = []
         self.last_routine_output = 0
@@ -83,12 +84,14 @@ class Alarm(object):
         click.secho(f"{ts} ", nl=False)
 
     def output_error(self, err):
-        self.output_leading_timestamp()
-        click.secho(err, fg="yellow", bold=True)
+        if not self.quiet:
+            self.output_leading_timestamp()
+            click.secho(err, fg="yellow", bold=True)
 
     def output_routine(self):
-        self.output_leading_timestamp()
-        click.secho("No active alarms", fg="green")
+        if not self.quiet:
+            self.output_leading_timestamp()
+            click.secho(f"No active alarms", fg="green")
 
     def output_alarms(self, cities, alarm_id):
         self.output_leading_timestamp()
@@ -105,6 +108,7 @@ class Alarm(object):
 )
 @click.option("--alarm-id", is_flag=True, help="Print alarm IDs")
 @click.option("--repeat-alarms", is_flag=True, help="Do not suppress ongoing alarms")
+@click.option("--quiet", is_flag=True, help="Print only active alarms")
 def alarm(**kwargs):
     Alarm(**kwargs).start()
 

@@ -30,6 +30,7 @@ Options:
   --routine-delay INTEGER  Routine message delay in seconds
   --alarm-id               Print alarm ID
   --repeat-alarms          Do not suppress ongoing alarms
+  --quiet                  Print only active alarms
   --help                   Show this message and exit.
 ```
 
