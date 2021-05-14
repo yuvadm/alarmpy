@@ -16,7 +16,12 @@ class Alarm(object):
     }
 
     def __init__(
-        self, delay=1, routine_delay=60 * 5, alarm_id=False, repeat_alarms=False, quiet=False
+        self,
+        delay=1,
+        routine_delay=60 * 5,
+        alarm_id=False,
+        repeat_alarms=False,
+        quiet=False,
     ):
         self.delay = delay
         self.last_routine_delay = routine_delay
@@ -91,7 +96,7 @@ class Alarm(object):
     def output_routine(self):
         if not self.quiet:
             self.output_leading_timestamp()
-            click.secho(f"No active alarms", fg="green")
+            click.secho("No active alarms", fg="green")
 
     def output_alarms(self, cities, alarm_id):
         self.output_leading_timestamp()
