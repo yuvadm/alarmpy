@@ -5,7 +5,7 @@ from datetime import datetime
 from time import sleep, time
 
 
-class Alarm(object):
+class Alarm:
 
     URL = "https://www.oref.org.il/WarningMessages/alert/alerts.json"
 
