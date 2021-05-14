@@ -31,7 +31,7 @@ class Alarm(object):
             try:
                 cities, alarm_id = self.fetch()
                 self.update(cities, alarm_id)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 self.output_error(f"Exception: {e}")
             finally:
                 sleep(self.delay)
@@ -39,8 +39,8 @@ class Alarm(object):
     def fetch(self):
         try:
             res = requests.get(self.URL, headers=self.HEADERS, timeout=1)
-        except requests.Timeout:
-            raise Exception("HTTP request timed out")
+        except requests.Timeout as e:
+            raise Exception("HTTP request timed out") from e
 
         if not res.content:
             # empty content means no alarms
@@ -51,10 +51,10 @@ class Alarm(object):
             alarm_id = data["id"]
             cities = data["data"]
             return cities, alarm_id
-        except ValueError:
-            raise Exception(f"Error parsing JSON: {res.content}")
-        except KeyError:
-            raise Exception(f"Missing keys in JSON data: {data}")
+        except ValueError as ve:
+            raise Exception(f"Error parsing JSON: {res.content}") from ve
+        except KeyError as ke:
+            raise Exception(f"Missing keys in JSON data: {data}") from ke
 
     def update(self, cities, alarm_id):
         if cities:
@@ -88,7 +88,7 @@ class Alarm(object):
 
     def output_routine(self):
         self.output_leading_timestamp()
-        click.secho(f"No active alarms", fg="green")
+        click.secho("No active alarms", fg="green")
 
     def output_alarms(self, cities, alarm_id):
         self.output_leading_timestamp()
