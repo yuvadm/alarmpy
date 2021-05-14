@@ -25,6 +25,6 @@ jobs:
       - name: Run pylint
         run: |
           pipenv run lint
-      # - name: Test with pytest
-      #   run: |
-      #     pipenv run test
+      - name: Test with pytest
+        run: |
+          pipenv run test
