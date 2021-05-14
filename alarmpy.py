@@ -32,6 +32,11 @@ class Alarm(object):
         self.current_alarms = []
         self.last_routine_output = 0
 
+        self.session = self.init_session()
+
+    def init_session(self):
+        return requests.Session()
+
     def start(self):
         while True:
             try:
@@ -44,7 +49,7 @@ class Alarm(object):
 
     def fetch(self):
         try:
-            res = requests.get(self.URL, headers=self.HEADERS, timeout=1)
+            res = self.session.get(self.URL, headers=self.HEADERS, timeout=1)
         except requests.Timeout as e:
             raise Exception("HTTP request timed out") from e
 
