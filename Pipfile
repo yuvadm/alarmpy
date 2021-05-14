@@ -10,6 +10,11 @@ click = "*"
 [dev-packages]
 pytest = "*"
 black = "==21.5b1"
+pylint = "*"
 
 [scripts]
 alarmpy = "python alarmpy.py"
+format = "black ."
+formatcheck = "black --check ."
+lint = "pylint -j 0 -d R,C alarmpy.py"
+test = "pytest"
