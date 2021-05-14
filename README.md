@@ -30,3 +30,7 @@ Options:
   --repeat-alarms          Do not suppress ongoing alarms
   --help                   Show this message and exit.
 ```
+
+## License
+
+[GPLv3](LICENSE)
