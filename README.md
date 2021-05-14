@@ -10,6 +10,8 @@ Polls the unofficial API endpoint every second for incoming alarms. Prints activ
 
 This tool is based on an unofficial API, and cannot be guaranteed to show correct or timely data. **Do not** use it if human life is at stake. **Do not** assume it shows you correct data. **Do not** assume it works properly, or even works at all. Always follow official guidelines and procedures published by [Pikud Ha'oref](https://www.oref.org.il/).
 
+Further fine-print covering the terms of use of this tool can be found in the [GPLv3 license](LICENSE) file.
+
 ## Usage
 
 ```bash
