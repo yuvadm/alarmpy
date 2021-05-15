@@ -60,6 +60,11 @@ class Alarm:
     def fetch(self):
         try:
             res = self.session.get(self.URL, headers=self.HEADERS, timeout=1)
+            if not res.ok and "Access Denied" in res.text:
+                self.output_error(
+                    "API endpoint has denied access. This might be due to geolocation limitations, please try running from an Israeli-based IP or proxy."
+                )
+                exit(1)
         except requests.Timeout as e:
             raise Exception("HTTP request timed out") from e
 
