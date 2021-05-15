@@ -12,12 +12,33 @@ This tool is based on an unofficial API, and cannot be guaranteed to show correc
 
 Further fine-print covering the terms of use of this tool can be found in the [GPLv3 license](LICENSE) file.
 
-## Usage
+## Install
+
+### Pip
+
+The easiest way to install is from PyPI with `pip`:
 
 ```bash
-$ pipenv sync
+$ pip install alarmpy
+```
+
+You can then run the `alarmpy` executable directly:
+
+```bash
+$ alarmpy --help
+```
+
+### Pipenv
+
+For development usage it's recommended to clone the git repo and use `pipenv`:
+
+```bash
+$ git clone https://github.com/yuvadm/alarmpy
+$ pipenv sync -d
 $ pipenv run alarmpy
 ```
+
+## Usage
 
 Advanced flags can be set as described in the usage:
 
