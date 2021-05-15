@@ -1,4 +1,5 @@
 import click
+import json
 import requests
 
 from datetime import datetime
@@ -17,12 +18,14 @@ class Alarm:
 
     def __init__(
         self,
+        language="he",
         delay=1,
         routine_delay=60 * 5,
         alarm_id=False,
         repeat_alarms=False,
         quiet=False,
     ):
+        self.language = language
         self.delay = delay
         self.last_routine_delay = routine_delay
         self.alarm_id = alarm_id
@@ -33,9 +36,14 @@ class Alarm:
         self.last_routine_output = 0
 
         self.session = self.init_session()
+        self.labels = self.load_labels()
 
     def init_session(self):
         return requests.Session()
+
+    def load_labels(self):
+        with open("labels.json", "r") as f:
+            return json.load(f)
 
     def start(self):
         while True:
@@ -105,13 +113,26 @@ class Alarm:
 
     def output_alarms(self, cities, alarm_id):
         self.output_leading_timestamp()
-        cities_str = ", ".join(cities)
+        cities_str = self.localize_cities(cities)
         click.secho(f"{cities_str} ", fg="red", nl=not self.alarm_id)
         if self.alarm_id:
             click.secho(f"({alarm_id})")
 
+    def localize_cities(self, cities):
+        localized_cities = [
+            self.labels.get(city, {}).get(f"label_{self.language}", city)
+            for city in cities
+        ]
+        return ", ".join(localized_cities)
+
 
 @click.command()
+@click.option(
+    "--language",
+    default="he",
+    type=click.Choice(["en", "he", "ar", "ru"]),
+    help="Alert language ",
+)
 @click.option("--delay", default=1, help="Polling delay in seconds")
 @click.option(
     "--routine-delay", default=60 * 5, help="Routine message delay in seconds"

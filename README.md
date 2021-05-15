@@ -26,12 +26,13 @@ $ pipenv run alarmpy --help
 Usage: alarmpy.py [OPTIONS]
 
 Options:
-  --delay INTEGER          Polling delay in seconds
-  --routine-delay INTEGER  Routine message delay in seconds
-  --alarm-id               Print alarm ID
-  --repeat-alarms          Do not suppress ongoing alarms
-  --quiet                  Print only active alarms
-  --help                   Show this message and exit.
+  --language [en|he|ar|ru]  Alert language
+  --delay INTEGER           Polling delay in seconds
+  --routine-delay INTEGER   Routine message delay in seconds
+  --alarm-id                Print alarm IDs
+  --repeat-alarms           Do not suppress ongoing alarms
+  --quiet                   Print only active alarms
+  --help                    Show this message and exit.
 ```
 
 ## License
