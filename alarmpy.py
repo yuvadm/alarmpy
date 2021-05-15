@@ -96,7 +96,7 @@ class Alarm:
     def output_error(self, err):
         if not self.quiet:
             self.output_leading_timestamp()
-            click.secho(err, fg="yellow", bold=True)
+            click.secho(err, fg="yellow")
 
     def output_routine(self):
         if not self.quiet:
