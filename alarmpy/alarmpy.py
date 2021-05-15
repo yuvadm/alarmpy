@@ -2,6 +2,7 @@ import click
 import json
 import requests
 
+from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 from time import sleep, time
@@ -98,10 +99,10 @@ class Alarm:
             self.last_routine_output = now
         self.current_alarms = []
 
-    def output_leading_timestamp(self):
+    def output_leading_timestamp(self, nl=False):
         now = datetime.now()
         ts = now.strftime("%Y-%m-%d %H:%M:%S")
-        click.secho(f"{ts} ", nl=False)
+        click.secho(f"{ts} ", nl=nl)
 
     def output_error(self, err):
         if not self.quiet:
@@ -114,11 +115,28 @@ class Alarm:
             click.secho("No active alarms", fg="green")
 
     def output_alarms(self, cities, alarm_id):
-        self.output_leading_timestamp()
-        cities_str = self.localize_cities(cities)
-        click.secho(f"{cities_str} ", fg="red", nl=not self.alarm_id)
+        areas = self.group_areas_and_localize(cities)
+        multiple_areas = len(areas) > 1
+        self.output_leading_timestamp(nl=multiple_areas)
+        for area, cities in areas.items():
+            cities_str = ", ".join(cities)
+            leading_tab = "\t" if multiple_areas else ""
+            click.secho(f"{leading_tab}{area} ", fg="red", bold=True, nl=False)
+            click.secho(f"\t{cities_str} ", fg="red")
         if self.alarm_id:
             click.secho(f"({alarm_id})")
+
+    def group_areas_and_localize(self, cities):
+        res = defaultdict(list)
+        for city in cities:
+            try:
+                area = self.labels[city][f"areaname_{self.language}"]
+                label = self.labels[city][f"label_{self.language}"]
+            except KeyError:
+                area = "Unknown"
+                label = city
+            res[area].append(label)
+        return res
 
     def localize_cities(self, cities):
         localized_cities = [
