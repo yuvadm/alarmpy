@@ -26,5 +26,5 @@ setuptools.setup(
     py_modules=["alarmpy"],
     python_requires=">=3.6",
     install_requires=["requests", "click"],
-    entry_points={"console_scripts": ["alarmpy = alarmpy:alarmpy"]},
+    entry_points={"console_scripts": ["alarmpy = alarmpy:cli"]},
 )

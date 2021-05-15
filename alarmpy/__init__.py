@@ -1,1 +1,1 @@
-from .alarmpy import alarmpy
+from .alarmpy import cli
