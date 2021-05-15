@@ -48,7 +48,7 @@ Usage: alarmpy.py [OPTIONS]
 
 Options:
   --language [en|he|ar|ru]  Alert language
-  --delay INTEGER           Polling delay in seconds
+  --polling-delay INTEGER   Polling delay in seconds
   --routine-delay INTEGER   Routine message delay in seconds
   --alarm-id                Print alarm IDs
   --repeat-alarms           Do not suppress ongoing alarms

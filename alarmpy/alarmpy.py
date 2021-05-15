@@ -20,14 +20,14 @@ class Alarm:
     def __init__(
         self,
         language="he",
-        delay=1,
+        polling_delay=1,
         routine_delay=60 * 5,
         alarm_id=False,
         repeat_alarms=False,
         quiet=False,
     ):
         self.language = language
-        self.delay = delay
+        self.polling_delay = polling_delay
         self.last_routine_delay = routine_delay
         self.alarm_id = alarm_id
         self.repeat_alarms = repeat_alarms
@@ -55,7 +55,7 @@ class Alarm:
             except Exception as e:  # pylint: disable=broad-except
                 self.output_error(f"Exception: {e}")
             finally:
-                sleep(self.delay)
+                sleep(self.polling_delay)
 
     def fetch(self):
         try:
@@ -133,9 +133,9 @@ class Alarm:
     "--language",
     default="he",
     type=click.Choice(["en", "he", "ar", "ru"]),
-    help="Alert language ",
+    help="Alert language",
 )
-@click.option("--delay", default=1, help="Polling delay in seconds")
+@click.option("--polling-delay", default=1, help="Polling delay in seconds")
 @click.option(
     "--routine-delay", default=60 * 5, help="Routine message delay in seconds"
 )
