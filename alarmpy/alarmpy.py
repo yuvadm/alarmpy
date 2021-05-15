@@ -3,6 +3,7 @@ import json
 import requests
 
 from datetime import datetime
+from pathlib import Path
 from time import sleep, time
 
 
@@ -42,7 +43,8 @@ class Alarm:
         return requests.Session()
 
     def load_labels(self):
-        with open("labels.json", "r") as f:
+        DATA_DIR = Path(__file__).parent / "data"
+        with open(DATA_DIR / "labels.json", "r") as f:
             return json.load(f)
 
     def start(self):
