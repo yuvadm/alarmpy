@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="alarmpy",
-    version="1.0.2",
+    version="1.0.3",
     author="Yuval Adam",
     author_email="_@yuv.al",
     description="Pikud Ha'oref Alarm Tracking",
@@ -23,7 +23,8 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Environment :: Console",
     ],
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude="tests"),
+    package_data={"alarmpy": ["data/*.json"]},
     python_requires=">=3.6",
     install_requires=["requests", "click"],
     entry_points={"console_scripts": ["alarmpy = alarmpy:cli"]},
