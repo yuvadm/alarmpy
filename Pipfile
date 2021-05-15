@@ -14,7 +14,7 @@ pylint = "*"
 
 [scripts]
 alarmpy = "python alarmpy/alarmpy.py"
-format = "black ."
-formatcheck = "black --check ."
+format = "black alarmpy"
+formatcheck = "black --check alarmpy"
 lint = "pylint -j 0 -d R,C alarmpy"
 test = "pytest"
