@@ -142,9 +142,9 @@ class Alarm:
 @click.option("--alarm-id", is_flag=True, help="Print alarm IDs")
 @click.option("--repeat-alarms", is_flag=True, help="Do not suppress ongoing alarms")
 @click.option("--quiet", is_flag=True, help="Print only active alarms")
-def alarm(**kwargs):
+def alarmpy(**kwargs):
     Alarm(**kwargs).start()
 
 
 if __name__ == "__main__":
-    alarm()
+    alarmpy()
