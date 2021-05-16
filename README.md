@@ -1,7 +1,7 @@
 # Pikud Ha'oref Alarm Tracking
 
-![https://github.com/yuvadm/alarmpy/actions/workflows/build.yml](https://github.com/yuvadm/alarmpy/workflows/Build/badge.svg)
-![https://pypi.org/project/alarmpy/](https://img.shields.io/pypi/v/alarmpy)
+[![Build](https://github.com/yuvadm/alarmpy/workflows/Build/badge.svg)](https://github.com/yuvadm/alarmpy/actions/workflows/build.yml)
+[![Pypi](https://img.shields.io/pypi/v/alarmpy)](https://pypi.org/project/alarmpy/)
 
 A simple CLI tool for tracking Pikud Ha'oref alarms.
 
