@@ -26,6 +26,14 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude="tests"),
     package_data={"alarmpy": ["data/*.json"]},
     python_requires=">=3.6",
-    install_requires=["requests", "click", "paho.mqtt.client"],
-    entry_points={"console_scripts": ["alarmpy = alarmpy:cli"]},
+    install_requires=["requests", "click"],
+    extras_require={
+        "mqttnotify":  ["paho-mqtt"],
+    },
+    entry_points={
+        "console_scripts": [
+            "alarmpy = alarmpy:cli",
+            "alarmpynotify = alarmpy:cli [mqttnotify]"
+            ]
+        },
 )
