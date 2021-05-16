@@ -26,6 +26,6 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude="tests"),
     package_data={"alarmpy": ["data/*.json"]},
     python_requires=">=3.6",
-    install_requires=["requests", "click"],
+    install_requires=["requests", "click", "blessed"],
     entry_points={"console_scripts": ["alarmpy = alarmpy:cli"]},
 )
