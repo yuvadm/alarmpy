@@ -133,7 +133,7 @@ class Alarm:
                 area = self.labels[city][f"areaname_{self.language}"]
                 label = self.labels[city][f"label_{self.language}"]
             except KeyError:
-                area = "Unknown"
+                area = ""
                 label = city
             res[area].append(label)
         return res
