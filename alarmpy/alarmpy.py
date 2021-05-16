@@ -159,8 +159,9 @@ class Alarm:
     def notify_alarms(self, cities):
         if self.mqtt_server != None and self.mqtt_topic != None:
             for city in cities:
-                if self.filters == None or self.check_filter(city):
-                    self.mqtt.publish(self.mqtt_topic, city)
+                label = self.labels[city][f"label_{self.language}"]
+                if self.filters == None or self.check_filter(label):
+                    self.mqtt.publish(self.mqtt_topic, label)
 
     def check_filter(self, city):
         for filter in self.filters:
