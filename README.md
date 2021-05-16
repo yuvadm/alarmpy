@@ -1,5 +1,8 @@
 # Pikud Ha'oref Alarm Tracking
 
+![https://github.com/yuvadm/alarmpy/actions/workflows/build.yml](https://github.com/yuvadm/alarmpy/workflows/Build/badge.svg)
+![https://pypi.org/project/alarmpy/](https://img.shields.io/pypi/v/alarmpy)
+
 A simple CLI tool for tracking Pikud Ha'oref alarms.
 
 Polls the unofficial API endpoint every second for incoming alarms. Prints active alarms as they occur. Prints routine messages once every 5 minutes by default.
