@@ -16,7 +16,7 @@ twine = "*"
 build = "*"
 
 [scripts]
-alarmpy = "python alarmpy/cli.py"
+alarmpy = "python -m alarmpy"
 format = "black alarmpy"
 formatcheck = "black --check alarmpy"
 lint = "pylint -j 0 -d R,C alarmpy"

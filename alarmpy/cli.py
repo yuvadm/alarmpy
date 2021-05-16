@@ -1,7 +1,7 @@
 import click
 
-from alarm import Alarm
-from display import Display
+from .alarm import Alarm
+from .display import Display
 
 
 @click.command()
