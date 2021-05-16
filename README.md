@@ -34,6 +34,7 @@ For development usage it's recommended to clone the git repo and use `pipenv`:
 
 ```bash
 $ git clone https://github.com/yuvadm/alarmpy
+$ cd alarmpy
 $ pipenv sync -d
 $ pipenv run alarmpy
 ```
