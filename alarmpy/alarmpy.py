@@ -139,10 +139,9 @@ class Alarm:
             click.secho(f"({alarm_id})")
 
     def notify_alarms(self, cities):
-        if self.mqtt_server != None:
+        if self.mqtt_server != None and self.mqtt_topic != None:
             for city in cities:
-                print("---")
-                print(city)
+                self.mqtt.publish(self.mqtt_topic, city)
 
     def localize_cities(self, cities):
         localized_cities = [
