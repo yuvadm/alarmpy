@@ -134,12 +134,8 @@ class Alarm:
     def group_areas_and_localize(self, cities):
         res = defaultdict(list)
         for city in cities:
-            try:
-                area = self.labels[city][f"areaname_{self.language}"]
-                label = self.labels[city][f"label_{self.language}"]
-            except KeyError:
-                area = ""
-                label = city
+            area = self.labels.get(city, {}).get(f"areaname_{self.language}", "")
+            label = self.labels.get(city, {}).get(f"label_{self.language}", city)
             res[area].append(label)
         return res
 
