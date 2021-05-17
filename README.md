@@ -79,7 +79,7 @@ Additional optional parameters for MQTT integration are:
 
 #### Filtering
 
-When MQTT is enabled, all alerts are sent as separate messages on the specified topic. In case there is a need to include only specific alert, use the `mqtt-filter` parameter to provide a semicolon separated list of substrings. Each alert city will be checked against all filters, and only when a match is found, will an MQTT message be sent. 
+When MQTT is enabled, all alerts are sent as separate messages on the specified topic. In case there is a desire to include only specific alert, use the `mqtt-filter` parameter to provide a semicolon separated list of substrings enclosed in double quotes. Each alert city and area will be checked against all filters, and only when a match is found, will an MQTT message be sent. For example: `--mqtt-filter "gaza;negev"`. 
 
 ## License
 

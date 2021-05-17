@@ -57,11 +57,11 @@ class Alarm:
 
         self.mqtt = mqtt.Client(self.mqtt_client_id)
         self.filters = None
-        if self.mqtt_server != None:
+        if self.mqtt_server is not None:
             self.mqtt.connect(self.mqtt_server, self.mqtt_port)
             self.mqtt.loop_start()
-            if self.mqtt_filter != None:
-                self.filters = self.mqtt_filter.split(";")
+            if self.mqtt_filter is not None:
+                self.filters = self.mqtt_filter.lower().split(";")
 
     def init_session(self):
         return requests.Session()
@@ -157,15 +157,18 @@ class Alarm:
             click.secho(f"({alarm_id})")
 
     def notify_alarms(self, cities):
-        if self.mqtt_server != None and self.mqtt_topic != None:
+        if self.mqtt_server not in None and self.mqtt_topic not in None:
             for city in cities:
+                area = self.labels[city][f"areaname_{self.language}"]
                 label = self.labels[city][f"label_{self.language}"]
-                if self.filters == None or self.check_filter(label):
+                if self.filters == None or self.check_filter(label, area):
                     self.mqtt.publish(self.mqtt_topic, label)
 
-    def check_filter(self, city):
+    def check_filter(self, city, area):
+        city = city.lower()
+        area = area.lower()
         for filter in self.filters:
-            if filter in city:
+            if filter in city or filter in area:
                 return True
         
         return False
