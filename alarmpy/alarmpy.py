@@ -157,7 +157,7 @@ class Alarm:
             click.secho(f"({alarm_id})")
 
     def notify_alarms(self, cities):
-        if self.mqtt_server not in None and self.mqtt_topic not in None:
+        if self.mqtt_server is not None and self.mqtt_topic is not None:
             for city in cities:
                 area = self.labels[city][f"areaname_{self.language}"]
                 label = self.labels[city][f"label_{self.language}"]
