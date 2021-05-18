@@ -228,6 +228,11 @@ class Alarm:
 @click.option("--repeat-alarms", is_flag=True, help="Do not suppress ongoing alarms")
 @click.option("--quiet", is_flag=True, help="Print only active alarms")
 @click.option(
+    "--desktop-notifications",
+    is_flag=True,
+    help="Create push notifications on your desktop notification center (currently only in Mac OS)",
+)
+@click.option(
     "--mqtt-server", default=None, help="Hostname / IP of MQTT server (optional)"
 )
 @click.option(
@@ -239,11 +244,6 @@ class Alarm:
     "--mqtt-filter",
     default=None,
     help="Payload value to filter before sending as a message (semicolon separated)",
-)
-@click.option(
-    "--desktop-notifications",
-    is_flag=True,
-    help="Create push notifications on your desktop notification center (currently only in Mac OS)",
 )
 def cli(**kwargs):
     Alarm(**kwargs).start()
