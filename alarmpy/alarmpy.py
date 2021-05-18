@@ -121,12 +121,10 @@ class Alarm:
 
     def output_alarms(self, cities, alarm_id):
         areas = self.group_areas_and_localize(cities)
-        multiple_areas = len(areas) > 1
-        self.output_leading_timestamp(nl=multiple_areas)
+        self.output_leading_timestamp(nl=True)
         for area, cities in areas.items():
             cities_str = ", ".join(cities)
-            leading_tab = "\t" if multiple_areas else ""
-            click.secho(f"{leading_tab}{area} ", fg="red", bold=True, nl=False)
+            click.secho(f"\t{area:<20} ", fg="red", bold=True, nl=False)
             click.secho(f"\t{cities_str} ", fg="red")
         if self.alarm_id:
             click.secho(f"({alarm_id})")
@@ -134,8 +132,9 @@ class Alarm:
     def group_areas_and_localize(self, cities):
         res = defaultdict(list)
         for city in cities:
-            area = self.labels.get(city, {}).get(f"areaname_{self.language}", "")
-            label = self.labels.get(city, {}).get(f"label_{self.language}", city)
+            labels = self.labels.get(city, {})
+            area = labels.get(f"areaname_{self.language}", "")
+            label = labels.get(f"label_{self.language}", city)
             res[area].append(label)
         return res
 
