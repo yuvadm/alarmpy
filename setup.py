@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="alarmpy",
-    version="1.2.0",
+    version="1.3.0",
     author="Yuval Adam",
     author_email="_@yuv.al",
     description="Pikud Ha'oref Alarm Tracking",
@@ -28,12 +28,12 @@ setuptools.setup(
     python_requires=">=3.6",
     install_requires=["requests", "click"],
     extras_require={
-        "mqttnotify":  ["paho-mqtt"],
+        "mqttnotify": ["paho-mqtt"],
     },
     entry_points={
         "console_scripts": [
             "alarmpy = alarmpy:cli",
-            "alarmpynotify = alarmpy:cli [mqttnotify]"
-            ]
-        },
+            "alarmpynotify = alarmpy:cli [mqttnotify]",
+        ]
+    },
 )
