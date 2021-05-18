@@ -1,7 +1,7 @@
 # Pikud Ha'oref Alarm Tracking
 
-![https://github.com/yuvadm/alarmpy/actions/workflows/build.yml](https://github.com/yuvadm/alarmpy/workflows/Build/badge.svg)
-![https://pypi.org/project/alarmpy/](https://img.shields.io/pypi/v/alarmpy)
+[![Build](https://github.com/yuvadm/alarmpy/workflows/Build/badge.svg)](https://github.com/yuvadm/alarmpy/actions/workflows/build.yml)
+[![PyPI](https://img.shields.io/pypi/v/alarmpy)](https://pypi.org/project/alarmpy/)
 
 A simple CLI tool for tracking Pikud Ha'oref alarms.
 
@@ -63,6 +63,8 @@ Options:
   --mqtt-topic TEXT         Topic on which to send MQTT messages
   --mqtt-filter TEXT        Payload value to filter before sending as a
                             message (semicolon separated)
+  --desktop-notifications   Create push notifications on your desktop
+                            notification center (currently only in Mac OS)
   --help                    Show this message and exit.
 ```
 ### MQTT Notification

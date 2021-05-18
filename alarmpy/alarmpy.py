@@ -1,5 +1,6 @@
 import click
 import json
+import os
 import requests
 
 from collections import defaultdict
@@ -36,6 +37,7 @@ class Alarm:
         mqtt_port=1883,
         mqtt_topic="",
         mqtt_filter=None,
+        desktop_notifications=False,
     ):
         self.language = language
         self.polling_delay = polling_delay
@@ -48,6 +50,13 @@ class Alarm:
         self.mqtt_port = mqtt_port
         self.mqtt_topic = mqtt_topic
         self.mqtt_filter = mqtt_filter
+
+        if desktop_notifications and not os.path.exists("/usr/bin/osascript"):
+            self.output_error(
+                "Desktop notifications are currently only available for MacOS"
+            )
+            desktop_notifications = False
+        self.desktop_notifications = desktop_notifications
 
         self.current_alarms = []
         self.last_routine_output = 0
@@ -146,13 +155,15 @@ class Alarm:
 
     def output_alarms(self, cities, alarm_id):
         areas = self.group_areas_and_localize(cities)
-        multiple_areas = len(areas) > 1
-        self.output_leading_timestamp(nl=multiple_areas)
+        self.output_leading_timestamp(nl=True)
         for area, cities in areas.items():
             cities_str = ", ".join(cities)
-            leading_tab = "\t" if multiple_areas else ""
-            click.secho(f"{leading_tab}{area} ", fg="red", bold=True, nl=False)
+            click.secho(f"\t{area:<20} ", fg="red", bold=True, nl=False)
             click.secho(f"\t{cities_str} ", fg="red")
+            if self.desktop_notifications:
+                os.system(
+                    f'/usr/bin/osascript -e \'display notification "{cities_str}" with title "Alarms at {area}"\''
+                )
         if self.alarm_id:
             click.secho(f"({alarm_id})")
 
@@ -176,12 +187,9 @@ class Alarm:
     def group_areas_and_localize(self, cities):
         res = defaultdict(list)
         for city in cities:
-            try:
-                area = self.labels[city][f"areaname_{self.language}"]
-                label = self.labels[city][f"label_{self.language}"]
-            except KeyError:
-                area = ""
-                label = city
+            labels = self.labels.get(city, {})
+            area = labels.get(f"areaname_{self.language}", "")
+            label = labels.get(f"label_{self.language}", city)
             res[area].append(label)
         return res
 
@@ -212,6 +220,11 @@ class Alarm:
 @click.option("--mqtt-port", default=1883, help="Port for MQTT server")
 @click.option("--mqtt-topic", default=None, help="Topic on which to send MQTT messages")
 @click.option("--mqtt-filter", default=None, help="Payload value to filter before sending as a message (semicolon separated)")
+@click.option(
+    "--desktop-notifications",
+    is_flag=True,
+    help="Create push notifications on your desktop notification center (currently only in Mac OS)",
+)
 def cli(**kwargs):
     Alarm(**kwargs).start()
 
