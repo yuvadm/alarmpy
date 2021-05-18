@@ -27,7 +27,7 @@ class Alarm:
         alarm_id=False,
         repeat_alarms=False,
         quiet=False,
-        desktop_notifications=False
+        desktop_notifications=False,
     ):
         self.language = language
         self.polling_delay = polling_delay
@@ -37,7 +37,9 @@ class Alarm:
         self.quiet = quiet
 
         if desktop_notifications and not os.path.exists("/usr/bin/osascript"):
-            self.output_error("Desktop notifications are currently only available for MacOS")
+            self.output_error(
+                "Desktop notifications are currently only available for MacOS"
+            )
             desktop_notifications = False
         self.desktop_notifications = desktop_notifications
 
@@ -135,7 +137,7 @@ class Alarm:
             click.secho(f"\t{cities_str} ", fg="red")
             if self.desktop_notifications:
                 os.system(
-                    f"/usr/bin/osascript -e 'display notification \"{cities_str}\" with title \"Alarms at {area}\"'"
+                    f'/usr/bin/osascript -e \'display notification "{cities_str}" with title "Alarms at {area}"\''
                 )
         if self.alarm_id:
             click.secho(f"({alarm_id})")
