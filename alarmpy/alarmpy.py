@@ -8,6 +8,11 @@ from datetime import datetime
 from pathlib import Path
 from time import sleep, time
 
+try:
+    import paho.mqtt.client as mqtt
+except ImportError:
+    pass
+
 
 class Alarm:
 
@@ -27,6 +32,11 @@ class Alarm:
         alarm_id=False,
         repeat_alarms=False,
         quiet=False,
+        mqtt_server="",
+        mqtt_client_id="alarmPyClient",
+        mqtt_port=1883,
+        mqtt_topic="",
+        mqtt_filter=None,
         desktop_notifications=False,
     ):
         self.language = language
@@ -35,6 +45,11 @@ class Alarm:
         self.alarm_id = alarm_id
         self.repeat_alarms = repeat_alarms
         self.quiet = quiet
+        self.mqtt_server = mqtt_server
+        self.mqtt_client_id = mqtt_client_id
+        self.mqtt_port = mqtt_port
+        self.mqtt_topic = mqtt_topic
+        self.mqtt_filter = mqtt_filter
 
         if desktop_notifications and not os.path.exists("/usr/bin/osascript"):
             self.output_error(
@@ -48,6 +63,14 @@ class Alarm:
 
         self.session = self.init_session()
         self.labels = self.load_labels()
+
+        self.mqtt = mqtt.Client(self.mqtt_client_id)
+        self.filters = None
+        if self.mqtt_server is not None:
+            self.mqtt.connect(self.mqtt_server, self.mqtt_port)
+            self.mqtt.loop_start()
+            if self.mqtt_filter is not None:
+                self.filters = self.mqtt_filter.lower().split(";")
 
     def init_session(self):
         return requests.Session()
@@ -82,6 +105,7 @@ class Alarm:
             # empty content means no alarms
             return [], None
 
+        data = {} # To avoid warning in KeyError
         try:
             data = res.json()
             alarm_id = data["id"]
@@ -101,6 +125,7 @@ class Alarm:
     def update_alarm(self, cities, alarm_id):
         if self.repeat_alarms or set(cities) != set(self.current_alarms):
             self.output_alarms(cities, alarm_id)
+            self.notify_alarms(cities)
         self.current_alarms = cities
 
     def update_routine(self):
@@ -142,6 +167,23 @@ class Alarm:
         if self.alarm_id:
             click.secho(f"({alarm_id})")
 
+    def notify_alarms(self, cities):
+        if self.mqtt_server is not None and self.mqtt_topic is not None:
+            for city in cities:
+                area = self.labels[city][f"areaname_{self.language}"]
+                label = self.labels[city][f"label_{self.language}"]
+                if self.filters == None or self.check_filter(label, area):
+                    self.mqtt.publish(self.mqtt_topic, label)
+
+    def check_filter(self, city, area):
+        city = city.lower()
+        area = area.lower()
+        for filter in self.filters:
+            if filter in city or filter in area:
+                return True
+        
+        return False
+
     def group_areas_and_localize(self, cities):
         res = defaultdict(list)
         for city in cities:
@@ -173,6 +215,11 @@ class Alarm:
 @click.option("--alarm-id", is_flag=True, help="Print alarm IDs")
 @click.option("--repeat-alarms", is_flag=True, help="Do not suppress ongoing alarms")
 @click.option("--quiet", is_flag=True, help="Print only active alarms")
+@click.option("--mqtt-server", default=None, help="Hostname / IP of MQTT server (optional)")
+@click.option("--mqtt-client-id", default="alarmPyClient", help="MQTT client identifier")
+@click.option("--mqtt-port", default=1883, help="Port for MQTT server")
+@click.option("--mqtt-topic", default=None, help="Topic on which to send MQTT messages")
+@click.option("--mqtt-filter", default=None, help="Payload value to filter before sending as a message (semicolon separated)")
 @click.option(
     "--desktop-notifications",
     is_flag=True,
