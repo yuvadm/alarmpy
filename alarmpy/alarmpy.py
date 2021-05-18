@@ -37,7 +37,7 @@ class Alarm:
         self.quiet = quiet
 
         if desktop_notifications and not os.path.exists("/usr/bin/osascript"):
-            click.secho(f"Desktop notifications are currently only available for MacOS", fg="yellow")
+            self.output_error("Desktop notifications are currently only available for MacOS")
             desktop_notifications = False
         self.desktop_notifications = desktop_notifications
 
