@@ -32,12 +32,12 @@ class Alarm:
         alarm_id=False,
         repeat_alarms=False,
         quiet=False,
+        desktop_notifications=False,
         mqtt_server="",
         mqtt_client_id="alarmPyClient",
         mqtt_port=1883,
         mqtt_topic="",
         mqtt_filter=None,
-        desktop_notifications=False,
     ):
         self.language = language
         self.polling_delay = polling_delay

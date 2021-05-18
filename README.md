@@ -57,31 +57,32 @@ Options:
   --alarm-id                Print alarm IDs
   --repeat-alarms           Do not suppress ongoing alarms
   --quiet                   Print only active alarms
+  --desktop-notifications   Create push notifications on your desktop
+                            notification center (currently only in Mac OS)
   --mqtt-server TEXT        Hostname / IP of MQTT server (optional)
   --mqtt-client-id TEXT     MQTT client identifier
   --mqtt-port INTEGER       Port for MQTT server
   --mqtt-topic TEXT         Topic on which to send MQTT messages
   --mqtt-filter TEXT        Payload value to filter before sending as a
                             message (semicolon separated)
-  --desktop-notifications   Create push notifications on your desktop
-                            notification center (currently only in Mac OS)
   --help                    Show this message and exit.
 ```
-### MQTT Notification
 
-Integration with an MQTT server provides the ability to send custom MQTT messages for all or some of the alerts that are received. To enable, specify at least the following parameters via the command line: 
+### MQTT Notifications
 
-* `mqtt-server` - The MQTT Server hostname or IP using the, e.g. `localhost`.
-* `mqtt-topic` - The MQTT topic to which the MQTT message will be sent, e.g. `alarmpy/zone`.
+Integration with an MQTT server provides the ability to send custom MQTT messages for all or some of the alerts that are received. To enable, specify at least the following parameters via the command line:
+
+- `mqtt-server` - The MQTT Server hostname or IP using the, e.g. `localhost`.
+- `mqtt-topic` - The MQTT topic to which the MQTT message will be sent, e.g. `alarmpy/zone`.
 
 Additional optional parameters for MQTT integration are:
 
-* `mqtt-client-id` - The ID of the MQTT client used by AlarmPy. This will be used to connect to the MQTT server. Default: `alarmPyClient`. This only needs to be change in case you plan to have more than one instance of AlarmPy running. 
-* `mqtt-port` - The port on which the MQTT server is listening to. Default: `1883`. 
+- `mqtt-client-id` - The ID of the MQTT client used by AlarmPy. This will be used to connect to the MQTT server. Default: `alarmPyClient`. This only needs to be change in case you plan to have more than one instance of AlarmPy running.
+- `mqtt-port` - The port on which the MQTT server is listening to. Default: `1883`.
 
 #### Filtering
 
-When MQTT is enabled, all alerts are sent as separate messages on the specified topic. In case there is a desire to include only specific alert, use the `mqtt-filter` parameter to provide a semicolon separated list of substrings enclosed in double quotes. Each alert city and area will be checked against all filters, and only when a match is found, will an MQTT message be sent. For example: `--mqtt-filter "gaza;negev"`. 
+When MQTT is enabled, all alerts are sent as separate messages on the specified topic. In case there is a desire to include only specific alert, use the `mqtt-filter` parameter to provide a semicolon separated list of substrings enclosed in double quotes. Each alert city and area will be checked against all filters, and only when a match is found, will an MQTT message be sent. For example: `--mqtt-filter "gaza;negev"`.
 
 ## License
 
