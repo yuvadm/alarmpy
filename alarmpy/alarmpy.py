@@ -8,6 +8,11 @@ from datetime import datetime
 from pathlib import Path
 from time import sleep, time
 
+try:
+    import paho.mqtt.client as mqtt
+except ImportError:
+    pass
+
 
 class Alarm:
 
@@ -28,6 +33,11 @@ class Alarm:
         repeat_alarms=False,
         quiet=False,
         desktop_notifications=False,
+        mqtt_server="",
+        mqtt_client_id="alarmPyClient",
+        mqtt_port=1883,
+        mqtt_topic="",
+        mqtt_filter=None,
     ):
         self.language = language
         self.polling_delay = polling_delay
@@ -35,13 +45,13 @@ class Alarm:
         self.alarm_id = alarm_id
         self.repeat_alarms = repeat_alarms
         self.quiet = quiet
-
-        if desktop_notifications and not os.path.exists("/usr/bin/osascript"):
-            self.output_error(
-                "Desktop notifications are currently only available for MacOS"
-            )
-            desktop_notifications = False
         self.desktop_notifications = desktop_notifications
+
+        self.mqtt_server = mqtt_server
+        self.mqtt_client_id = mqtt_client_id
+        self.mqtt_port = mqtt_port
+        self.mqtt_topic = mqtt_topic
+        self.mqtt_filter = mqtt_filter
 
         self.current_alarms = []
         self.last_routine_output = 0
@@ -49,8 +59,35 @@ class Alarm:
         self.session = self.init_session()
         self.labels = self.load_labels()
 
+        self.init_desktop_notifications()
+        self.init_mqtt()
+
     def init_session(self):
         return requests.Session()
+
+    def init_desktop_notifications(self):
+        if self.desktop_notifications and not os.path.exists("/usr/bin/osascript"):
+            self.output_error(
+                "Desktop notifications are currently only available for MacOS"
+            )
+            self.desktop_notifications = False
+
+    def init_mqtt(self):
+        try:
+            self.mqtt = mqtt.Client(self.mqtt_client_id)
+        except NameError:
+            self.mqtt = None
+
+        self.filters = None
+        if self.mqtt_server and self.mqtt:
+            if not self.mqtt:
+                self.output_error(
+                    "MQTT support cannot be instantiated without the paho-mqtt library installed"
+                )
+            self.mqtt.connect(self.mqtt_server, self.mqtt_port)
+            self.mqtt.loop_start()
+            if self.mqtt_filter:
+                self.filters = self.mqtt_filter.lower().split(";")
 
     def load_labels(self):
         DATA_DIR = Path(__file__).parent / "data"
@@ -82,6 +119,7 @@ class Alarm:
             # empty content means no alarms
             return [], None
 
+        data = {}  # To avoid warning in KeyError
         try:
             data = res.json()
             alarm_id = data["id"]
@@ -101,6 +139,7 @@ class Alarm:
     def update_alarm(self, cities, alarm_id):
         if self.repeat_alarms or set(cities) != set(self.current_alarms):
             self.output_alarms(cities, alarm_id)
+            self.notify_alarms(cities)
         self.current_alarms = cities
 
     def update_routine(self):
@@ -142,6 +181,21 @@ class Alarm:
         if self.alarm_id:
             click.secho(f"({alarm_id})")
 
+    def notify_alarms(self, cities):
+        if self.mqtt_server and self.mqtt_topic:
+            for city in cities:
+                labels = self.labels.get(city, {})
+                area = labels.get(f"areaname_{self.language}", "")
+                label = labels.get(f"label_{self.language}", city)
+                if self.filters is None or self.check_filter(label, area):
+                    self.mqtt.publish(self.mqtt_topic, label)
+
+    def check_filter(self, city, area):
+        for flt in self.filters:
+            if flt in city.lower() or flt in area.lower():
+                return True
+        return False
+
     def group_areas_and_localize(self, cities):
         res = defaultdict(list)
         for city in cities:
@@ -173,6 +227,19 @@ class Alarm:
 @click.option("--alarm-id", is_flag=True, help="Print alarm IDs")
 @click.option("--repeat-alarms", is_flag=True, help="Do not suppress ongoing alarms")
 @click.option("--quiet", is_flag=True, help="Print only active alarms")
+@click.option(
+    "--mqtt-server", default=None, help="Hostname / IP of MQTT server (optional)"
+)
+@click.option(
+    "--mqtt-client-id", default="alarmPyClient", help="MQTT client identifier"
+)
+@click.option("--mqtt-port", default=1883, help="Port for MQTT server")
+@click.option("--mqtt-topic", default=None, help="Topic on which to send MQTT messages")
+@click.option(
+    "--mqtt-filter",
+    default=None,
+    help="Payload value to filter before sending as a message (semicolon separated)",
+)
 @click.option(
     "--desktop-notifications",
     is_flag=True,
