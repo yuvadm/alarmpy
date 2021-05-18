@@ -3,7 +3,7 @@ import json
 import os
 import requests
 
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from datetime import datetime
 from pathlib import Path
 from time import sleep, time
@@ -203,7 +203,7 @@ class Alarm:
             area = labels.get(f"areaname_{self.language}", "")
             label = labels.get(f"label_{self.language}", city)
             res[area].append(label)
-        return res
+        return OrderedDict(res)
 
     def localize_cities(self, cities):
         localized_cities = [
