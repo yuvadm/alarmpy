@@ -64,7 +64,11 @@ class Alarm:
         self.session = self.init_session()
         self.labels = self.load_labels()
 
-        self.mqtt = mqtt.Client(self.mqtt_client_id)
+        try:
+            self.mqtt = mqtt.Client(self.mqtt_client_id)
+        except NameError:
+            self.mqtt = None
+
         self.filters = None
         if self.mqtt_server is not None:
             self.mqtt.connect(self.mqtt_server, self.mqtt_port)
@@ -105,7 +109,7 @@ class Alarm:
             # empty content means no alarms
             return [], None
 
-        data = {} # To avoid warning in KeyError
+        data = {}  # To avoid warning in KeyError
         try:
             data = res.json()
             alarm_id = data["id"]
@@ -181,7 +185,7 @@ class Alarm:
         for filter in self.filters:
             if filter in city or filter in area:
                 return True
-        
+
         return False
 
     def group_areas_and_localize(self, cities):
@@ -215,11 +219,19 @@ class Alarm:
 @click.option("--alarm-id", is_flag=True, help="Print alarm IDs")
 @click.option("--repeat-alarms", is_flag=True, help="Do not suppress ongoing alarms")
 @click.option("--quiet", is_flag=True, help="Print only active alarms")
-@click.option("--mqtt-server", default=None, help="Hostname / IP of MQTT server (optional)")
-@click.option("--mqtt-client-id", default="alarmPyClient", help="MQTT client identifier")
+@click.option(
+    "--mqtt-server", default=None, help="Hostname / IP of MQTT server (optional)"
+)
+@click.option(
+    "--mqtt-client-id", default="alarmPyClient", help="MQTT client identifier"
+)
 @click.option("--mqtt-port", default=1883, help="Port for MQTT server")
 @click.option("--mqtt-topic", default=None, help="Topic on which to send MQTT messages")
-@click.option("--mqtt-filter", default=None, help="Payload value to filter before sending as a message (semicolon separated)")
+@click.option(
+    "--mqtt-filter",
+    default=None,
+    help="Payload value to filter before sending as a message (semicolon separated)",
+)
 @click.option(
     "--desktop-notifications",
     is_flag=True,
