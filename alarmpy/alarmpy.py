@@ -1,5 +1,6 @@
 import click
 import json
+import os
 import requests
 
 from collections import defaultdict
@@ -26,6 +27,7 @@ class Alarm:
         alarm_id=False,
         repeat_alarms=False,
         quiet=False,
+        desktop_notifications=False
     ):
         self.language = language
         self.polling_delay = polling_delay
@@ -33,6 +35,11 @@ class Alarm:
         self.alarm_id = alarm_id
         self.repeat_alarms = repeat_alarms
         self.quiet = quiet
+
+        if desktop_notifications and not os.path.exists("/usr/bin/osascript"):
+            self.output_error("Desktop notifications are currently only available for MacOS")
+            desktop_notifications = False
+        self.desktop_notifications = desktop_notifications
 
         self.current_alarms = []
         self.last_routine_output = 0
@@ -126,6 +133,10 @@ class Alarm:
             cities_str = ", ".join(cities)
             click.secho(f"\t{area:<20} ", fg="red", bold=True, nl=False)
             click.secho(f"\t{cities_str} ", fg="red")
+            if self.desktop_notifications:
+                os.system(
+                    f"/usr/bin/osascript -e 'display notification \"{cities_str}\" with title \"Alarms at {area}\"'"
+                )
         if self.alarm_id:
             click.secho(f"({alarm_id})")
 
@@ -160,6 +171,11 @@ class Alarm:
 @click.option("--alarm-id", is_flag=True, help="Print alarm IDs")
 @click.option("--repeat-alarms", is_flag=True, help="Do not suppress ongoing alarms")
 @click.option("--quiet", is_flag=True, help="Print only active alarms")
+@click.option(
+    "--desktop-notifications",
+    is_flag=True,
+    help="Create push notifications on your desktop notification center (currently only in Mac OS)",
+)
 def cli(**kwargs):
     Alarm(**kwargs).start()
 
