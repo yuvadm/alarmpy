@@ -70,15 +70,17 @@ Options:
 
 ### MQTT Notifications
 
-Integration with an MQTT server provides the ability to send custom MQTT messages for all or some of the alerts that are received. To enable, specify at least the following parameters via the command line:
+Integration with an MQTT server provides the ability to send custom MQTT messages for all or some of the alerts that are received. MQTT requires [`paho-mqtt`](https://pypi.org/project/paho-mqtt/) to be installed separately as an optional dependency.
 
-- `mqtt-server` - The MQTT Server hostname or IP using the, e.g. `localhost`.
-- `mqtt-topic` - The MQTT topic to which the MQTT message will be sent, e.g. `alarmpy/zone`.
+To enable, specify at least the following parameters via the command line:
+
+- `mqtt-server` - The MQTT Server hostname or IP, e.g. `localhost`
+- `mqtt-topic` - The MQTT topic to which the MQTT message will be sent, e.g. `alarmpy/zone`
 
 Additional optional parameters for MQTT integration are:
 
-- `mqtt-client-id` - The ID of the MQTT client used by AlarmPy. This will be used to connect to the MQTT server. Default: `alarmPyClient`. This only needs to be change in case you plan to have more than one instance of AlarmPy running.
-- `mqtt-port` - The port on which the MQTT server is listening to. Default: `1883`.
+- `mqtt-client-id` - The ID of the MQTT client used by alarmpy. This will be used to connect to the MQTT server. Default: `alarmPyClient`. This only needs to be change in case you plan to have more than one instance of alarmpy running
+- `mqtt-port` - The port on which the MQTT server is listening to. Default: `1883`
 
 #### Filtering
 
