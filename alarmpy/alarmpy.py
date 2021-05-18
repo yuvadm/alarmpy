@@ -45,18 +45,13 @@ class Alarm:
         self.alarm_id = alarm_id
         self.repeat_alarms = repeat_alarms
         self.quiet = quiet
+        self.desktop_notifications = desktop_notifications
+
         self.mqtt_server = mqtt_server
         self.mqtt_client_id = mqtt_client_id
         self.mqtt_port = mqtt_port
         self.mqtt_topic = mqtt_topic
         self.mqtt_filter = mqtt_filter
-
-        if desktop_notifications and not os.path.exists("/usr/bin/osascript"):
-            self.output_error(
-                "Desktop notifications are currently only available for MacOS"
-            )
-            desktop_notifications = False
-        self.desktop_notifications = desktop_notifications
 
         self.current_alarms = []
         self.last_routine_output = 0
@@ -64,20 +59,35 @@ class Alarm:
         self.session = self.init_session()
         self.labels = self.load_labels()
 
+        self.init_desktop_notifications()
+        self.init_mqtt()
+
+    def init_session(self):
+        return requests.Session()
+
+    def init_desktop_notifications(self):
+        if self.desktop_notifications and not os.path.exists("/usr/bin/osascript"):
+            self.output_error(
+                "Desktop notifications are currently only available for MacOS"
+            )
+            self.desktop_notifications = False
+
+    def init_mqtt(self):
         try:
             self.mqtt = mqtt.Client(self.mqtt_client_id)
         except NameError:
             self.mqtt = None
 
         self.filters = None
-        if self.mqtt_server is not None:
+        if self.mqtt_server and self.mqtt:
+            if not self.mqtt:
+                self.output_error(
+                    "MQTT support cannot be instantiated without the paho-mqtt library installed"
+                )
             self.mqtt.connect(self.mqtt_server, self.mqtt_port)
             self.mqtt.loop_start()
-            if self.mqtt_filter is not None:
+            if self.mqtt_filter:
                 self.filters = self.mqtt_filter.lower().split(";")
-
-    def init_session(self):
-        return requests.Session()
 
     def load_labels(self):
         DATA_DIR = Path(__file__).parent / "data"
@@ -172,20 +182,18 @@ class Alarm:
             click.secho(f"({alarm_id})")
 
     def notify_alarms(self, cities):
-        if self.mqtt_server is not None and self.mqtt_topic is not None:
+        if self.mqtt_server and self.mqtt_topic:
             for city in cities:
-                area = self.labels[city][f"areaname_{self.language}"]
-                label = self.labels[city][f"label_{self.language}"]
-                if self.filters == None or self.check_filter(label, area):
+                labels = self.labels.get(city, {})
+                area = labels.get(f"areaname_{self.language}", "")
+                label = labels.get(f"label_{self.language}", city)
+                if self.filters is None or self.check_filter(label, area):
                     self.mqtt.publish(self.mqtt_topic, label)
 
     def check_filter(self, city, area):
-        city = city.lower()
-        area = area.lower()
-        for filter in self.filters:
-            if filter in city or filter in area:
+        for flt in self.filters:
+            if flt in city.lower() or flt in area.lower():
                 return True
-
         return False
 
     def group_areas_and_localize(self, cities):
