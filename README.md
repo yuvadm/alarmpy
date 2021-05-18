@@ -57,6 +57,8 @@ Options:
   --alarm-id                Print alarm IDs
   --repeat-alarms           Do not suppress ongoing alarms
   --quiet                   Print only active alarms
+  --desktop-notifications   Create push notifications on your desktop
+                            notification center (currently only in Mac OS)
   --help                    Show this message and exit.
 ```
 
