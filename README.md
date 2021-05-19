@@ -52,6 +52,10 @@ Usage: alarmpy.py [OPTIONS]
 
 Options:
   --language [en|he|ar|ru]  Alert language
+  --highlight TEXT          String to search for and highlight in case of
+                            alarm
+  --reverse                 Reverse Hebrew/Arabic output for terminals with
+                            RTL bugs
   --polling-delay INTEGER   Polling delay in seconds
   --routine-delay INTEGER   Routine message delay in seconds
   --alarm-id                Print alarm IDs
@@ -65,6 +69,7 @@ Options:
   --mqtt-topic TEXT         Topic on which to send MQTT messages
   --mqtt-filter TEXT        Payload value to filter before sending as a
                             message (semicolon separated)
+  --output-test             Print a debug output and exit
   --help                    Show this message and exit.
 ```
 

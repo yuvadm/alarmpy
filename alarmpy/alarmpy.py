@@ -2,6 +2,7 @@ import click
 import json
 import os
 import requests
+import random
 
 from collections import defaultdict
 from datetime import datetime
@@ -27,6 +28,8 @@ class Alarm:
     def __init__(
         self,
         language="he",
+        highlight="",
+        reverse=False,
         polling_delay=1,
         routine_delay=60 * 5,
         alarm_id=False,
@@ -38,8 +41,11 @@ class Alarm:
         mqtt_port=1883,
         mqtt_topic="",
         mqtt_filter=None,
+        **_kwargs,
     ):
         self.language = language
+        self.highlight = highlight
+        self.reverse = reverse
         self.polling_delay = polling_delay
         self.last_routine_delay = routine_delay
         self.alarm_id = alarm_id
@@ -171,10 +177,17 @@ class Alarm:
         areas = self.group_areas_and_localize(cities)
         self.output_leading_timestamp(nl=True)
         for area, cities in sorted(areas.items()):
-            cities_str = ", ".join(cities)
-            click.secho(f"\t{area:<20} ", fg="red", bold=True, nl=False)
-            click.secho(f"\t{cities_str} ", fg="red")
+            bg = "yellow" if self.highlight and self.highlight in area else None
+            click.secho(f"\t{area:<20} ", fg="red", bg=bg, bold=True, nl=False)
+            click.secho("\t", nl=False)
+            for i, city in enumerate(cities):
+                bg = "yellow" if self.highlight and self.highlight in city else None
+                click.secho(f"{city}", fg="red", bg=bg, nl=False)
+                suffix = ", " if i < len(cities) - 1 else ""
+                click.secho(f"{suffix}", fg="red", nl=False)
+            click.secho("")
             if self.desktop_notifications:
+                cities_str = ", ".join(cities)
                 os.system(
                     f'/usr/bin/osascript -e \'display notification "{cities_str}" with title "Alarms at {area}"\''
                 )
@@ -202,15 +215,24 @@ class Alarm:
             labels = self.labels.get(city, {})
             area = labels.get(f"areaname_{self.language}", "")
             label = labels.get(f"label_{self.language}", city)
+            if self.reverse:
+                area = area[::-1]
+                label = label[::-1]
             res[area].append(label)
         return res
 
-    def localize_cities(self, cities):
-        localized_cities = [
-            self.labels.get(city, {}).get(f"label_{self.language}", city)
-            for city in cities
-        ]
-        return ", ".join(localized_cities)
+    def output_test(self):
+        self.output_error("Output test started...")
+        self.output_routine()
+        alarms = random.sample(list(self.labels.keys()), 8)
+        self.output_alarms(alarms, 9999)
+        self.output_routine()
+        self.highlight = "ה" if self.language == "he" else "s"
+        alarms = random.sample(list(self.labels.keys()), 10)
+        self.output_alarms(alarms, 9999)
+        self.output_routine()
+        self.output_routine()
+        self.output_error("Output test complete, exiting.")
 
 
 @click.command()
@@ -219,6 +241,16 @@ class Alarm:
     default="he",
     type=click.Choice(["en", "he", "ar", "ru"]),
     help="Alert language",
+)
+@click.option(
+    "--highlight",
+    default="",
+    help="String to search for and highlight in case of alarm",
+)
+@click.option(
+    "--reverse",
+    is_flag=True,
+    help="Reverse Hebrew/Arabic output for terminals with RTL bugs",
 )
 @click.option("--polling-delay", default=1, help="Polling delay in seconds")
 @click.option(
@@ -245,8 +277,17 @@ class Alarm:
     default=None,
     help="Payload value to filter before sending as a message (semicolon separated)",
 )
+@click.option(
+    "--output-test",
+    is_flag=True,
+    help="Print a debug output and exit",
+)
 def cli(**kwargs):
-    Alarm(**kwargs).start()
+    alarm = Alarm(**kwargs)
+    if kwargs["output_test"]:
+        alarm.output_test()
+    else:
+        alarm.start()
 
 
 if __name__ == "__main__":
