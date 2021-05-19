@@ -28,7 +28,7 @@ class Alarm:
     def __init__(
         self,
         language="he",
-        highlight="",
+        highlight=None,
         reverse=False,
         polling_delay=1,
         routine_delay=60 * 5,
@@ -244,7 +244,6 @@ class Alarm:
 )
 @click.option(
     "--highlight",
-    default="",
     help="String to search for and highlight in case of alarm",
 )
 @click.option(
