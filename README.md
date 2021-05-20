@@ -44,6 +44,24 @@ $ pipenv run alarmpy
 
 ## Usage
 
+For the default usage after installation, just run:
+
+```bash
+$ alarmpy
+```
+
+### Display
+
+- Set the output language using `--language [en|he|ar|ru]`, this uses the official city and area name translations for Hebrew, Arabic, English and Russian.
+- In case of RTL issues in the terminal use `--reverse` to output all names in reverse.
+- Use `--highlight abc` in order to highlight any alarm which contains the string `abc`.
+
+### Proxy
+
+The unofficial API is limited for use for Israeli-originating IPs only. In order to use alarmpy from outside Israel, users must route traffic through an Israeli exit point. The `HTTPS_PROXY` environment variable is supported for this use case.
+
+### Advanced
+
 Advanced flags can be set as described in the usage:
 
 ```bash
