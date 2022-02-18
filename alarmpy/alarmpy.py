@@ -125,6 +125,10 @@ class Alarm:
             # empty content means no alarms
             return [], None
 
+        if res.content == b"\xef\xbb\xbf\r\n":
+            # some weird binary content that also means no alarms
+            return [], None
+
         data = {}  # To avoid warning in KeyError
         try:
             data = res.json()
