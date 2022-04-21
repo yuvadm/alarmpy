@@ -103,7 +103,8 @@ class Alarm:
     def start(self):
         while True:
             try:
-                cities, alarm_id = self.fetch()
+                res = self.fetch()
+                cities, alarm_id = self.parse(res)
                 self.update(cities, alarm_id)
             except Exception as e:  # pylint: disable=broad-except
                 self.output_error(f"Exception: {e}")
@@ -120,18 +121,21 @@ class Alarm:
                 exit(1)
         except requests.Timeout as e:
             raise Exception("HTTP request timed out") from e
+        
+        return res.content
 
-        if not res.content:
+    def parse(self, res):
+        if not res:
             # empty content means no alarms
             return [], None
 
-        if res.content == b"\xef\xbb\xbf\r\n":
+        if res == b"\xef\xbb\xbf\r\n":
             # some weird binary content that also means no alarms
             return [], None
 
         data = {}  # To avoid warning in KeyError
         try:
-            data = json.loads(res.content[3:-2])  # strip leading and trailing bytes
+            data = json.loads(res[3:-2])  # strip leading and trailing bytes
             alarm_id = data["id"]
             cities = data["data"]
             return cities, alarm_id
