@@ -119,10 +119,9 @@ class Alarm:
                     "API endpoint has denied access. This might be due to geolocation limitations, please try running from an Israeli-based IP or proxy."
                 )
                 exit(1)
+            return res.content
         except requests.Timeout as e:
             raise Exception("HTTP request timed out") from e
-        
-        return res.content
 
     def parse(self, res):
         if not res:
