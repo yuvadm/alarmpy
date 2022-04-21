@@ -9,7 +9,7 @@ click = "*"
 
 [dev-packages]
 pytest = "*"
-black = "==21.5b1"
+black = "*"
 pylint = "*"
 twine = "*"
 build = "*"
