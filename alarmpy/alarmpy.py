@@ -131,7 +131,7 @@ class Alarm:
 
         data = {}  # To avoid warning in KeyError
         try:
-            data = res.json()
+            data = json.loads(res.content[3:-2])  # strip leading and trailing bytes
             alarm_id = data["id"]
             cities = data["data"]
             return cities, alarm_id
