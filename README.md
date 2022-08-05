@@ -1,4 +1,4 @@
-# Pikud Ha'oref Alarm Tracking
+# 🚨 Pikud Ha'oref Alarm Tracking
 
 [![Build](https://github.com/yuvadm/alarmpy/workflows/Build/badge.svg)](https://github.com/yuvadm/alarmpy/actions/workflows/build.yml)
 [![PyPI](https://img.shields.io/pypi/v/alarmpy)](https://pypi.org/project/alarmpy/)
