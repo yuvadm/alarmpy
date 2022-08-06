@@ -121,7 +121,7 @@ class Alarm:
                     )
                     exit(1)
                 else:
-                    raise Exception("HTTP request has failed") from e
+                    raise Exception("HTTP request has failed")
             return res.content
         except requests.Timeout as e:
             raise Exception("HTTP request timed out") from e
