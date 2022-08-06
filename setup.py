@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="alarmpy",
-    version="1.5.2",
+    version="1.5.3",
     author="Yuval Adam",
     author_email="_@yuv.al",
     description="Pikud Ha'oref Alarm Tracking",
