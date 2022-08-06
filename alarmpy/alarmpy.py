@@ -72,11 +72,16 @@ class Alarm:
         return requests.Session()
 
     def init_desktop_notifications(self):
-        if self.desktop_notifications and not os.path.exists("/usr/bin/osascript"):
-            self.output_error(
-                "Desktop notifications are currently only available for MacOS"
-            )
-            self.desktop_notifications = False
+        if self.desktop_notifications:
+            if os.path.exists("/usr/bin/notify-send"):
+                self.desktop_notifications = "linux"
+            elif os.path.exists("/usr/bin/osascript"):
+                self.desktop_notifications = "osx"
+            else:
+                self.output_error(
+                    "Desktop notifications are currently only available for Linux and MacOS"
+                )
+                self.desktop_notifications = False
 
     def init_mqtt(self):
         try:
@@ -197,10 +202,13 @@ class Alarm:
                 click.secho(f"{suffix}", fg="red", nl=False)
             click.secho("")
             if self.desktop_notifications:
-                cities_str = ", ".join(cities)
-                os.system(
-                    f'/usr/bin/osascript -e \'display notification "{cities_str}" with title "Alarms at {area}"\''
-                )
+                areas_str = "\U0001f6a8" + ", ".join(areas.keys())
+                if self.desktop_notifications == "osx":
+                    os.system(
+                        f'/usr/bin/osascript -e \'display notification "{areas_str}" with title "Alarms at {area}"\''
+                    )
+                else:
+                    os.system(f'/usr/bin/notify-send "{areas_str}"')
         if self.alarm_id:
             click.secho(f"({alarm_id})")
 
