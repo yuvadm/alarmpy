@@ -205,7 +205,7 @@ class Alarm:
                 areas_str = "\U0001f6a8" + ", ".join(areas.keys())
                 if self.desktop_notifications == "osx":
                     os.system(
-                        f'/usr/bin/osascript -e \'display notification "{areas_str}" with title "Alarms at {area}"\''
+                        f'/usr/bin/osascript -e \'display notification "{areas_str}" with title "Alarmpy"\''
                     )
                 else:
                     os.system(f'/usr/bin/notify-send "{areas_str}"')
