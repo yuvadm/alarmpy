@@ -17,14 +17,13 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install pip and testing tools
         run: |
-          python -m pip install --upgrade pipenv
-          pipenv install -d
+          python -m pip install black pytest pylint
       - name: Check formatting with black
         run: |
-          pipenv run formatcheck
+          black --check alarmpy
       - name: Run pylint
         run: |
-          pipenv run lint
+          pylint -j 0 -d R,C alarmpy
       - name: Test with pytest
         run: |
-          pipenv run test
+          pytest
