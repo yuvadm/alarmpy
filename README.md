@@ -56,9 +56,15 @@ $ alarmpy
 - In case of RTL issues in the terminal use `--reverse` to output all names in reverse.
 - Use `--highlight abc` in order to highlight any alarm which contains the string `abc`.
 
-### Proxy
+### Proxy and Mirror Servers
 
 The unofficial API is limited for use for Israeli-originating IPs only. In order to use alarmpy from outside Israel, users must route traffic through an Israeli exit point. The `HTTPS_PROXY` environment variable is supported for this use case.
+
+Alternatively, a well-known mirror URL can be used:
+
+```bash
+$ alarmpy --mirror http://alarmpy.yuv.al/alerts.json
+```
 
 ### Advanced
 

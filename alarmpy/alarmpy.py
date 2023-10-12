@@ -16,7 +16,6 @@ except ImportError:
 
 
 class Alarm:
-
     URL = "https://www.oref.org.il/WarningMessages/alert/alerts.json"
 
     HEADERS = {
@@ -30,6 +29,7 @@ class Alarm:
         language="he",
         highlight=None,
         reverse=False,
+        mirror="",
         polling_delay=1,
         routine_delay=60 * 5,
         alarm_id=False,
@@ -43,6 +43,7 @@ class Alarm:
         mqtt_filter=None,
         **_kwargs,
     ):
+        self.url = mirror or self.URL
         self.language = language
         self.highlight = highlight
         self.reverse = reverse
@@ -118,11 +119,11 @@ class Alarm:
 
     def fetch(self):
         try:
-            res = self.session.get(self.URL, headers=self.HEADERS, timeout=1)
+            res = self.session.get(self.url, headers=self.HEADERS, timeout=1)
             if not res.ok:
                 if "Access Denied" in res.text:
                     self.output_error(
-                        "API endpoint has denied access. This might be due to geolocation limitations, please try running from an Israeli-based IP or proxy."
+                        "API endpoint has denied access. This might be due to geolocation limitations, please try running from an Israeli-based IP or proxy, or use the --mirror flag"
                     )
                     exit(1)
                 else:
@@ -269,6 +270,7 @@ class Alarm:
     is_flag=True,
     help="Reverse Hebrew/Arabic output for terminals with RTL bugs",
 )
+@click.option("--mirror", default="", help="A mirror host for fetching events")
 @click.option("--polling-delay", default=1, help="Polling delay in seconds")
 @click.option(
     "--routine-delay", default=60 * 5, help="Routine message delay in seconds"
